@@ -1,6 +1,6 @@
 {
-  "name": "tora",
-  "productName": "tora",
+  "name": "towa",
+  "productName": "towa",
   "version": "1.0.0",
   "description": "A League of Legends Announcer Replacement",
   "main": "src/index.js",
