@@ -53,17 +53,17 @@ class packData {
   };
 } // TODO: make this a thing. have it automagically scan all packs and check if they have a valid pack data and structure it if false.
 
-function loadConfig(){
+function loadConfig() {
   console.log(window)
-  readFile(path.join(__dirname, '../data/settings.json'), (err, file)=>{
-    if(err){
+  readFile(path.join(__dirname, '../data/settings.json'), (err, file) => {
+    if (err) {
       console.log(err)
-    }else{
+    } else {
       data = JSON.parse(file);
-      if(data.currentPack){
+      if (data.currentPack) {
         setVoice(data.currentPack)
       }
-      if(data.volume){
+      if (data.volume) {
         setVolume(data.volume)
         console.log('setting slider val', data.volume)
         window.webContents.send('slider:setValue', data.volume);
@@ -147,16 +147,16 @@ function setVoice(menuItem) {
   })
 }; // Sets the selected voice pack to active. THIS ASSUMES THE PASSED TEXT IS VALID.
 
-function updateConfig(){
-  readFile(path.join(__dirname, '../data/settings.json'), (err, file)=>{
-    if(err){
+function updateConfig() {
+  readFile(path.join(__dirname, '../data/settings.json'), (err, file) => {
+    if (err) {
       console.log(err);
-    }else{
+    } else {
       data = JSON.parse(file);
       data['currentPack'] = curPackName;
       data['volume'] = volume;
 
-      writeFile(path.join(__dirname, '../data/settings.json'), JSON.stringify(data), ()=>{
+      writeFile(path.join(__dirname, '../data/settings.json'), JSON.stringify(data), () => {
         console.log('Config file')
       });
     };
@@ -209,20 +209,26 @@ function pollEventQueue() {
         if (!audioPlaying) {
           let id = eventQueue.shift();
           let ct = curPackData.events.get(id);
-          audioPlaying = true;
-          if (ct == 1) {
-            window.webContents.send('audioPlay', [path.join(__dirname, `../packs/${curPackName}/${id}0.mp3`), volume]);
-          } else {
-            let select = getRandomInt(1, ct + 1);
-            window.webContents.send('audioPlay', [path.join(__dirname, `../packs/${curPackName}/${id}${select - 1}.mp3`), volume]);
-          };
-          setTimeout(() => {
-            if (eventQueue.length > 0) {
-              if (active) {
-                setTimeout(() => { mainl() }, 3000);
-              };
-            } else { console.log('Event queue is empty.', eventQueue); setTimeout(() => { pollEventQueue() }, 500) };
-          }, 2000)
+          if (ct == undefined) {
+            console.log('Event not supported by current pack: ', id);
+            setTimeout(() => { pollEventQueue() }, 500);
+          } // Checks if the current ap has a clip for the event.
+           else {
+            audioPlaying = true;
+            if (ct == 1) {
+              window.webContents.send('audioPlay', [path.join(__dirname, `../packs/${curPackName}/${id}0.mp3`), volume]);
+            } else {
+              let select = getRandomInt(1, ct + 1);
+              window.webContents.send('audioPlay', [path.join(__dirname, `../packs/${curPackName}/${id}${select - 1}.mp3`), volume]);
+            };
+            setTimeout(() => {
+              if (eventQueue.length > 0) {
+                if (active) {
+                  setTimeout(() => { mainl() }, 3000);
+                };
+              } else { console.log('Event queue is empty.', eventQueue); setTimeout(() => { pollEventQueue() }, 500) };
+            }, 2000)
+          }
         } else { console.log('Audio is currently playing.. Waiting.'); setTimeout(() => { pollEventQueue() }, 500) };
       }    // main loop;
     } { console.log('Event queue empty.') }
@@ -264,6 +270,7 @@ function pollLive() {
   if (active) {
     let enc = `${Buffer.from(`riot:${LCUPass}`).toString('base64')}`
     https.get(`https://127.0.0.1:2999/liveclientdata/allgamedata`, { headers: { Authorization: `Basic ${enc}` } }, (res => {
+      console.log('Live polled.')
       let data = ''
       res.on('data', (chunk) => {
         data += chunk;
@@ -271,15 +278,20 @@ function pollLive() {
       // Ending the response 
       res.on('end', () => {
         data = JSON.parse(data);
-        console.log(data);
-        if (data.httpStatus) {
-
-        } if (data.events.Events.length == 0) { // FIXME: errors bc .Events doesnt exist at the time, change to if doesnt exist then detect loading screen and move the lower half to a function so it can still be invoked with the logic tree
-
-        }// Player in loading screen.
+        if (data.httpStatus == 404) {
+          console.log('In loading screen. Waiting..')
+          setTimeout(() => { pollLive() }, 500); // polls roughly every .25s
+        } // Player in loading screen.
         else if (data.events) {
-          
-         }
+          if (data.events.Events) {
+            if (data.events.Events.length == 0) {
+              console.log('In loading screen full. Waiting..')
+              setTimeout(() => { pollLive() }, 500); // polls roughly every .25s
+            } else {
+              siftTree();
+            }
+          }
+        }
         function siftTree() {
           if (firstStart) {
             if (data.events.Events.length > 1) { lastEventLength = data.events.Events.length; }
@@ -316,6 +328,12 @@ function pollLive() {
               //case 'ChampionKill':
               //case 'FirstBlood':
               //  case 'Multikill':
+              switch (e.EventName) {
+                case "ChampionKill":
+                  if (i < data.events.Events.length - 1 && data.events.Events[i + 1].EventName == "FirstBlood") { eventQueue.push('FirstBlood') }
+                  break;
+
+              }
               if (e.EventName == "ChampionKill" && i < data.events.Events.length - 1 && data.events.Events[i + 1].EventName == "FirstBlood") { eventQueue.push('FirstBlood') }
               else if (e.EventName == "ChampionKill" && i < data.events.Events.length - 1 && data.events.Events[i + 1].EventName == "Multikill") {
                 let multikill = data.events.Events[i, + 1].KillStreak
@@ -461,7 +479,11 @@ const createWindow = () => {
   window = mainWindow;
   mainWindow.webContents.on('did-finish-load', function () {
     loadConfig();
-});
+    let enc = `${Buffer.from(`riot:${LCUPass}`).toString('base64')}`
+    https.get(`https://127.0.0.1:2999/liveclientdata/allgamedata`, { headers: { Authorization: `Basic ${enc}` } }, (res => {
+      console.log(res)
+    })).on('error', (e) => { console.log(e) })
+  });
 };
 
 // This method will be called when Electron has finished
