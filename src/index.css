@@ -4,4 +4,56 @@ body {
   margin: auto;
   max-width: 38rem;
   padding: 2rem;
+  background-image: url('../data/mainBackground.jpg');
+  background-position: 0px, 200px;
+}
+
+.h1Backdrop {
+  border-radius: 25px;
+  background: #97c657;
+  padding: 10px;
+}
+.p1Backdrop{
+  background: #b4ec67;
+  padding: 5px
+}
+
+.wrapper .sidebar {
+  background: #709340;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 15px;
+    height: 100%;
+    padding: 20px 0;
+    transition: all 0.5s ease;
+}
+
+.wrapper .sidebar ul li a{
+  display: block;
+  padding: 13px 30px;
+  color:#99397a;
+  font-size: 24px;
+  font-weight: bold;
+  position: relative;
+  transition: all 0.5s ease;
+  width: 32px;
+  border-radius: 15px;
+}
+
+.wrapper .sidebar ul li a:hover,
+.wrapper .sidebar ul li a.active{
+  color:#cc4ca3;
+  background:#f3f492;
+  border-radius: 15px;
+  border-right: 2px solid rgb(5, 5, 5);
+  width: 120%;
+}
+
+.menuList{
+  visibility: hidden;
+}
+
+.wrapper .sidebar:hover{
+  width: 25%;
 }
