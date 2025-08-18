@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, Tray, nativeImage, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, Tray, nativeImage, screen, contextBridge, ipcRenderer } = require('electron');
 const path = require('path');
 const { readdir, fstat, readFile, writeFile } = require('fs');
 const https = require('https')
@@ -463,8 +463,12 @@ async function setVolume(event, val) {
 const createWindow = () => {
   // Create the browser window.
   var mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 350,
+    height: 420,
+    frame: false,
+    resizable: false,
+    transparent: true,
+    backgroundColor: '#00000000',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -591,3 +595,7 @@ function getRandomInt(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
 }
+
+ipcMain.on('close-window', () => {
+    BrowserWindow.getFocusedWindow().close();
+});

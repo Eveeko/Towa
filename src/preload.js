@@ -8,5 +8,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setVolume: (val) => ipcRenderer.invoke('pack:setVolume', val),
   setSliderValue: (val) => ipcRenderer.on('slider:setValue', val),
   audioPlay: (vals) => ipcRenderer.on('audioPlay', vals),
-  audioEnded: () => ipcRenderer.invoke('audio:end')
+  audioEnded: () => ipcRenderer.invoke('audio:end'),
+  closeWindow: () => ipcRenderer.send('close-window')
 })

@@ -7,68 +7,48 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
     integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
   <link rel="stylesheet" href="index.css" />
-
   <script defer src="render.js"></script>
 </head>
 
-<body class="active">
-  <div class="wrapper">
-    <div class="sidebar">
-      <ul class="menuList">
-        <li>
-          <a href="#" class="active">
-            <span class="item">Dashboard</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="item">Packs</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="item">Help</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="item">ff15</span>
-          </a>
-        </li>
-      </ul>
+<body>
+  <div class="titlebar">
+    <div class="titlebar_close" id="window_closeBtn">
+      <div class="window_closeBtnGlow" id="window_closeBtnGlow"></div>
     </div>
   </div>
-  <h1 class="h1Backdrop">🐸 Hi!! Im Towa!</h1>
-  <p style="color: #b4ec67; font-weight: bolder; text-shadow: 1px 1px #000000;">Your personal announcer replacement for League of Legends!</p>
+
+  <img src="../data/mainBackground.png" class="bkgrnd" id="bkgrnd"></div>
+
+  <div class="consoleDiv" id="consoleDiv">
+    <div class="consoleBg"></div>
+    <h1 class="consoleh1" id="consoleh1">test</h1>
+  </div>
+
+  <div class="stateBtn" id="stateBtn">
+    <div class="stateBtnIcon" id="stateBtnIcon"></div>
+  </div>
+
+  <!-- <h1 class="h1Backdrop">🐸 Hi!! Im Towa!</h1>
+  <p style="color: #b4ec67; font-weight: bolder; text-shadow: 1px 1px #000000;">Your personal announcer replacement for
+    League of Legends!</p>
 
   <hr />
   <button id="startBtn" class="btn btn-success">Start</button>
   <button id="stopBtn" class="btn btn-warning">Stop</button>
-  <span id="volDisplay" style="position: relative; right: -125px; color: #b4ec67; font-weight: bolder;font-size: medium;">Volume: 35%</span>
+  <span id="volDisplay"
+    style="position: relative; right: -125px; color: #b4ec67; font-weight: bolder;font-size: medium;">Volume: 35%</span>
   <div class="slidecontainer">
     <input type="range" min="0" max="100" value="20" class="slider" id="volRange">
   </div>
 
-  <button id="voiceSelectBtn" class="btn btn-block">Swap Voice</button>
+  <button id="voiceSelectBtn" class="btn btn-block">Swap Voice</button> -->
+
+  <img src="../data/frogFoot.png" class="frogFoot">
 
   <audio id="audioPlayer" hidden>
     <source src="" type="audio/mp3">
   </audio>
-  <script>
-    var audio = document.getElementById('audioPlayer')
-    function setVolume(vol) {
-      audio.volume = vol;
-    }
-    var menuList = document.querySelector(".menuList");
-    var sidebar = document.querySelector(".sidebar");
-    sidebar.addEventListener("mouseenter", (event)=>{
-      console.log(event);
-      menuList.style.visibility = "visible";
-    })
-    sidebar.addEventListener("mouseleave", (event)=>{
-      menuList.style.visibility = "hidden";
-    })
-  </script>
+  <script src="main.js"></script>
 </body>
 
 </html>
