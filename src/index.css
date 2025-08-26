@@ -125,9 +125,9 @@ body {
 
 .consoleDiv {
   position: relative;
-  width: 90%;
+  width: 80%;
   height: 120px;
-  left: 5%;
+  left: 10%;
   top: 10px;
   background: #2f17381f;
   border-radius: 10px;
@@ -170,7 +170,7 @@ body {
   width: 60px;
   height: 60px;
   background-color: #763f70;
-  border-radius: 15%;
+  border-radius: 15px;
   cursor: pointer;
   box-shadow: 0px 0px 2px 1px #22132b73;
   transition: all 0.1s ease-in-out;
@@ -196,6 +196,145 @@ body {
   background-color: #322831 !important;
   box-shadow: 0px 0px 2px 1px #00000073 !important;
 }
+
 .stateBtnIconLoading {
-    filter: brightness(0) saturate(100%) invert(27%) sepia(20%) saturate(437%) hue-rotate(256deg) brightness(96%) contrast(91%) !important;
+  filter: brightness(0) saturate(100%) invert(27%) sepia(20%) saturate(437%) hue-rotate(256deg) brightness(96%) contrast(91%) !important;
+  animation: spin 1s linear infinite !important;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stateBtnClose {
+  background-color: #c12222;
+  box-shadow: 0px 0px 2px 1px #2b131373;
+}
+
+.stateBtnClose:hover {
+  background-color: #eb3535;
+  box-shadow: 0px 0px 5px 3px #f0696987;
+}
+
+
+.sliderCont {
+  position: absolute;
+  width: 60%;
+  bottom: 43.5%;
+  left: 9%;
+}
+
+.volslider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #763f70;
+  box-shadow: 0px 0px 2px 1px #22132b73;
+  outline: none;
+  position: absolute;
+  width: 55%;
+  height: 55px;
+  left: 35%;
+  bottom: 30.5%;
+  border-radius: 15px;
+}
+
+.volslider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  position: relative;
+  appearance: none;
+  width: 8px;
+  top: -18px;
+  height: 42px;
+  background: #ce8ac6;
+  border: #be69f087 1px solid;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.volslider::-webkit-slider-thumb:hover {
+  background-color: #ffaaee;
+  box-shadow: 0px 0px 5px 3px #dea5ff87;
+}
+
+.volslider::-webkit-slider-runnable-track {
+  width: 80%;
+  height: 6px;
+  background: #9c5994;
+  border-radius: 5px;
+}
+
+.packSelectDiv {
+  position: absolute;
+  bottom: 46%;
+  left: 10%;
+  width: 80%;
+  height: 55px;
+  background-color: #763f70;
+  border-radius: 15px;
+  box-shadow: 0px 0px 2px 1px #22132b73;
+}
+
+.packSelectDropdownBtn {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  width: 65px;
+  height: 55px;
+  background-color: #763f70;
+  border-radius: 25% 0px 0px 25%;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+}
+
+.packSelectDropdownBtn:hover {
+  background-color: #a06b9c;
+  box-shadow: 0px 0px 5px 3px #be69f087;
+}
+
+.packSelectDropdownBtnIcon {
+  position: relative;
+  top: 16px;
+  left: 35%;
+  width: 24px;
+  height: 24px;
+  background-image: url("../data/dropdown.svg");
+}
+
+.packSelectDivider {
+  position: relative;
+  top: -50px;
+  left: 70px;
+  width: 2px;
+  height: 80%;
+  background-color: #ce8ac6;
+}
+
+.packSelectCurnameDiv {
+  position: absolute;
+  top: 10%;
+  left: 28%;
+  width: 70%;
+  height: 80%;
+  border-radius: 0px 10px 10px 0px;
+  background-color: #683461;
+  overflow: hidden;
+}
+
+.packSelectCurnameH1 {
+  position: absolute;
+  top: -10px;
+  left: 0px;
+  width: max-content;
+  height: 55%;
+  font-size: 22px;
+  color: #ce8ac6;
+  white-space: nowrap;
+  transform: translateX(0);
+  transition: transform 3s ease;
 }

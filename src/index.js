@@ -137,7 +137,7 @@ function setVoice(menuItem) {
           if (i == files.length - 1) {
             packObj.events = ftmp; // Sets the events map to the ftmp map
             curPackData = packObj;
-            console.log(curPackData);
+            console.log("CUR", curPackData);
             reloadAnnouncer();
             updateConfig();
           }; // Setting events in packObj
@@ -243,8 +243,14 @@ function startAnnouncer() {
     reloadCtx().then(() => {
       tray.setImage(iconOn);
       tray.setContextMenu(ctxMenu);
+      setTimeout(() => {
+        window.webContents.send('announcer:started');
+      }, 500);
     });
-  }; // Check if announcer is active.
+  } // Check if announcer is active.
+  else {
+    stopAnnouncer();
+  }
 };
 function reloadAnnouncer() {
   return new Promise(resolve => {
@@ -257,6 +263,9 @@ function stopAnnouncer() {
   reloadCtx().then(() => {
     tray.setImage(iconOff);
     tray.setContextMenu(ctxMenu);
+    setTimeout(() => {
+        window.webContents.send('announcer:stopped');
+      }, 500);
   });
 }; // Stops the announcer from activating.
 
@@ -501,7 +510,7 @@ app.on('ready', () => {
   ipcMain.handle('pack:setVolume', setVolume);
   ipcMain.handle('main:FF', FF);
   ipcMain.handle('main:noFF', noFF);
-  ipcMain.handle('audio:end', audioEnded);
+  ipcMain.handle('audio:ended', audioEnded);
   console.log(path.join(__dirname, '/data/iconOff.png'))
   reloadCtx().then(() => {
     tray = new Tray(iconOff);

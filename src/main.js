@@ -25,4 +25,58 @@ window_closeBtn.addEventListener('click', function() {
 stateBtn.addEventListener('click', function() {
     stateBtn.classList.add("stateBtnLoading");
     stateBtnIcon.classList.add("stateBtnIconLoading");
+    stateBtnIcon.style.backgroundImage = "url('../data/loading.svg')";
+    window.electronAPI.startAnnouncer();
+});
+window.electronAPI.announcerStarted(() =>{
+    console.log('Announcer started');
+    stateBtn.classList.remove("stateBtnLoading");
+    stateBtnIcon.classList.remove("stateBtnIconLoading");
+    stateBtn.classList.add("stateBtnClose");
+    stateBtnIcon.style.backgroundImage = "url('../data/off.svg')";
+});
+window.electronAPI.announcerStopped(() => {
+    console.log('Announcer stopped');
+    stateBtn.classList.remove("stateBtnClose");
+    stateBtnIcon.style.backgroundImage = "url('../data/power.svg')";
+    stateBtnIcon.classList.remove("stateBtnIconLoading");
+    stateBtn.classList.remove("stateBtnLoading");
+});
+
+let isScrolledRight = false; // Add this at the top with other variables
+
+function scrollText() {
+    const text = document.querySelector('.packSelectCurnameH1');
+    const container = document.querySelector('.packSelectCurnameDiv');
+    const textWidth = text.offsetWidth;
+    const containerWidth = container.offsetWidth;
+    
+    if (textWidth > containerWidth) {
+        // Calculate how far we need to scroll
+        const scrollDistance = textWidth - containerWidth;
+        
+        if (!isScrolledRight) {
+            // Scroll to the left
+            text.style.transform = `translateX(-${scrollDistance}px)`;
+            isScrolledRight = true;
+        } else {
+            // Scroll back to the start
+            text.style.transform = 'translateX(0)';
+            isScrolledRight = false;
+        }
+    }
+}
+
+// Update the interval to a reasonable time for reading
+setInterval(scrollText, 3000); // Scroll every 3 seconds
+
+window.electronAPI.audioPlay((event, params) =>{
+    console.log('Playing audio:', params);
+    audio.scr = params[0];
+    audio.volume = Math.round(params[1]);
+    audio.currentTime = 0;
+    audio.play();
+    audio.addEventListener('ended', () => {
+        window.electronAPI.audioEnded();
+    });
 });
