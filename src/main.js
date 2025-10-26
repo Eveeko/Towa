@@ -3,9 +3,14 @@ var window_closeBtn = document.getElementById('window_closeBtn')
 var window_closeBtnGlow = document.getElementById('window_closeBtnGlow')
 var stateBtn = document.getElementById('stateBtn')
 var stateBtnIcon = document.getElementById('stateBtnIcon')
+var consoleH1 = document.getElementById('consoleh1');
+
+var consoleText = "";
 
 function setVolume(vol) {
     audio.volume = vol;
+    consoleText += `Volume set: ${vol}.\n`;
+    updateConsole();
 }
 
 // Functionality for the close window button topright corner.
@@ -34,6 +39,8 @@ window.electronAPI.announcerStarted(() =>{
     stateBtnIcon.classList.remove("stateBtnIconLoading");
     stateBtn.classList.add("stateBtnClose");
     stateBtnIcon.style.backgroundImage = "url('../data/off.svg')";
+    consoleText += "Announcer has started.\n";
+    updateConsole();
 });
 window.electronAPI.announcerStopped(() => {
     console.log('Announcer stopped');
@@ -41,6 +48,17 @@ window.electronAPI.announcerStopped(() => {
     stateBtnIcon.style.backgroundImage = "url('../data/power.svg')";
     stateBtnIcon.classList.remove("stateBtnIconLoading");
     stateBtn.classList.remove("stateBtnLoading");
+    consoleText += "Announcer has stopped.\n";
+    updateConsole();
+});
+window.electronAPI.announcerNotRunning(() => {
+    console.log('League client is not running');
+    stateBtn.classList.remove("stateBtnClose");
+    stateBtnIcon.style.backgroundImage = "url('../data/power.svg')";
+    stateBtnIcon.classList.remove("stateBtnIconLoading");
+    stateBtn.classList.remove("stateBtnLoading");
+    consoleText += "Unable to start, League is not running.\n";
+    updateConsole();
 });
 
 let isScrolledRight = false; // Add this at the top with other variables
@@ -69,6 +87,11 @@ function scrollText() {
 
 // Update the interval to a reasonable time for reading
 setInterval(scrollText, 3000); // Scroll every 3 seconds
+
+function updateConsole() {
+    consoleH1.innerText = consoleText;
+    consoleH1.scrollTop = consoleH1.scrollHeight;
+};
 
 window.electronAPI.audioPlay((event, params) =>{
     console.log('Playing audio:', params);

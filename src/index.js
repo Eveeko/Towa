@@ -72,6 +72,16 @@ function loadConfig() {
   }); // Loads config file.
 }
 
+function isLeagueClientRunning() {
+  return new Promise(resolve => {
+    exec("tasklist", (err, stdout, stderr) => {
+      if (err) return reject(err);
+      const processFound = stdout.toLowerCase().includes("leagueclient.exe");
+      resolve(processFound);
+    });
+  });
+};
+
 function getPackNames() {
   return new Promise(resolve => {
     readdir(path.join(__dirname, '../packs'), (err, files) => {
@@ -213,7 +223,7 @@ function pollEventQueue() {
             console.log('Event not supported by current pack: ', id);
             setTimeout(() => { pollEventQueue() }, 500);
           } // Checks if the current ap has a clip for the event.
-           else {
+          else {
             audioPlaying = true;
             if (ct == 1) {
               window.webContents.send('audioPlay', [path.join(__dirname, `../packs/${curPackName}/${id}0.mp3`), volume]);
@@ -237,15 +247,22 @@ function pollEventQueue() {
 
 function startAnnouncer() {
   if (!active) {
-    active = true
-    pollEventQueue();
-    pollLive()
-    reloadCtx().then(() => {
-      tray.setImage(iconOn);
-      tray.setContextMenu(ctxMenu);
-      setTimeout(() => {
-        window.webContents.send('announcer:started');
-      }, 500);
+    isLeagueClientRunning().then(running => {
+      if (running) {
+        active = true
+        pollEventQueue();
+        pollLive()
+        reloadCtx().then(() => {
+          tray.setImage(iconOn);
+          tray.setContextMenu(ctxMenu);
+          setTimeout(() => {
+            window.webContents.send('announcer:started');
+          }, 500);
+        });
+      } else {
+        window.webContents.send("announcer:notRunning");
+        console.log('League Client is not running. Cannot start announcer.');
+      }
     });
   } // Check if announcer is active.
   else {
@@ -264,8 +281,8 @@ function stopAnnouncer() {
     tray.setImage(iconOff);
     tray.setContextMenu(ctxMenu);
     setTimeout(() => {
-        window.webContents.send('announcer:stopped');
-      }, 500);
+      window.webContents.send('announcer:stopped');
+    }, 500);
   });
 }; // Stops the announcer from activating.
 
@@ -606,5 +623,5 @@ function getRandomInt(min, max) {
 }
 
 ipcMain.on('close-window', () => {
-    BrowserWindow.getFocusedWindow().close();
+  BrowserWindow.getFocusedWindow().close();
 });

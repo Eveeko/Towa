@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openList: () => ipcRenderer.invoke('pack:openList'),
   startAnnouncer: () => ipcRenderer.invoke('pack:startAnnouncer'),
   announcerStarted: (callback) => ipcRenderer.on('announcer:started', (_event, value) => callback(value)),
+  announcerNotRunning: (callback) => ipcRenderer.on('announcer:notRunning', (_event, value) => callback(value)),
   stopAnnouncer: () => ipcRenderer.invoke('pack:stopAnnouncer'),
   announcerStopped: (callback) => ipcRenderer.on('announcer:stopped', (_event, value) => callback(value)),
   setVolume: (val) => ipcRenderer.invoke('pack:setVolume', val),

@@ -152,6 +152,7 @@ body {
   text-shadow: 1px 1px 1px #485630;
   width: 90%;
   height: 80%;
+  overflow-y: scroll;
 }
 
 .frogFoot {
