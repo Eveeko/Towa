@@ -314,6 +314,7 @@ function pollLive() {
               console.log('In loading screen full. Waiting..')
               setTimeout(() => { pollLive() }, 500); // polls roughly every .25s
             } else {
+              console.log('In game, sifting tree.')
               siftTree();
             }
           }

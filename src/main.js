@@ -4,12 +4,13 @@ var window_closeBtnGlow = document.getElementById('window_closeBtnGlow')
 var stateBtn = document.getElementById('stateBtn')
 var stateBtnIcon = document.getElementById('stateBtnIcon')
 var consoleH1 = document.getElementById('consoleh1');
+const slider = document.getElementById('volRange');
 
 var consoleText = "";
 
 function setVolume(vol) {
     audio.volume = vol;
-    consoleText += `Volume set: ${vol}.\n`;
+    consoleText += `Volume set to: ${Math.round(vol * 100)}%.\n`;
     updateConsole();
 }
 
@@ -93,13 +94,44 @@ function updateConsole() {
     consoleH1.scrollTop = consoleH1.scrollHeight;
 };
 
-window.electronAPI.audioPlay((event, params) =>{
+window.electronAPI.audioPlay(params =>{
     console.log('Playing audio:', params);
-    audio.scr = params[0];
-    audio.volume = Math.round(params[1]);
+    if (!params || !params[0]) {
+        console.warn('audioPlay: missing src parameter');
+        return;
+    }
+    // set source (fix typo: scr -> src)
+    audio.src = params[0];
+
+    // parse volume percent (accept strings like '50' or '50%') and convert to 0..1
+    let volPercent = 50; // default to 100%
+    if (params.length > 1 && params[1] != null) {
+        // remove trailing % if present and coerce to Number
+        const raw = String(params[1]).trim().replace('%', '');
+        const n = Number(raw);
+        if (!Number.isNaN(n)) volPercent = n;
+        else console.warn('audioPlay: invalid volume, defaulting to 50%', params[1]);
+    }
+    // clamp to [0,100] then convert to [0,1]
+    volPercent = Math.min(100, Math.max(0, volPercent));
+    audio.volume = volPercent / 100;
+
     audio.currentTime = 0;
     audio.play();
+    // Add the ended listener only once for this play call (prevents accumulating listeners)
     audio.addEventListener('ended', () => {
         window.electronAPI.audioEnded();
-    });
+    }, { once: true });
+});
+
+window.electronAPI.setSliderValue((val) => {
+    slider.value = val;
+});
+
+slider.addEventListener('change', (event) => {
+    let percent = event.target.value;
+    percent = Math.min(100, Math.max(0, percent));
+    percent = percent / 100;
+    setVolume(percent);
+    window.electronAPI.setVolume(Number(event.target.value));
 });

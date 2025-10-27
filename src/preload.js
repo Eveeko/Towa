@@ -9,8 +9,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   stopAnnouncer: () => ipcRenderer.invoke('pack:stopAnnouncer'),
   announcerStopped: (callback) => ipcRenderer.on('announcer:stopped', (_event, value) => callback(value)),
   setVolume: (val) => ipcRenderer.invoke('pack:setVolume', val),
-  setSliderValue: (val) => ipcRenderer.on('slider:setValue', val),
-  audioPlay: (vals) => ipcRenderer.on('audioPlay', vals),
+  setSliderValue: (callback) => ipcRenderer.on('slider:setValue', (_event, value) => callback(value)),
+  audioPlay: (callback) => ipcRenderer.on('audioPlay', (_event, values) => callback(values)),
   audioEnded: () => ipcRenderer.invoke('audio:ended'),
   closeWindow: () => ipcRenderer.send('close-window')
 })
