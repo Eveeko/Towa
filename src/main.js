@@ -1,4 +1,5 @@
 var audio = document.getElementById('audioPlayer')
+var sfxAudio = document.getElementById('sfxPlayer')
 var window_closeBtn = document.getElementById('window_closeBtn')
 var window_closeBtnGlow = document.getElementById('window_closeBtnGlow')
 var stateBtn = document.getElementById('stateBtn')
@@ -15,9 +16,10 @@ function setVolume(vol) {
 }
 
 // Functionality for the close window button topright corner.
-window_closeBtn.addEventListener('mouseover', function() {
+window_closeBtn.addEventListener('mouseenter', function() {
     window_closeBtnGlow.classList.add('show');
     window_closeBtn.style.filter = 'brightness(0) saturate(100%) invert(98%) sepia(44%) saturate(1362%) hue-rotate(24deg) brightness(98%) contrast(89%)';
+    playBtnHover();
 });
 window_closeBtn.addEventListener('mouseleave', function() {
     window_closeBtnGlow.classList.remove('show');
@@ -28,11 +30,15 @@ window_closeBtn.addEventListener('click', function() {
 });
 // ----------------------------------------------------------
 
+stateBtn.addEventListener('mouseenter', function() {
+    playBtnHover();
+});
 stateBtn.addEventListener('click', function() {
     stateBtn.classList.add("stateBtnLoading");
     stateBtnIcon.classList.add("stateBtnIconLoading");
     stateBtnIcon.style.backgroundImage = "url('../data/loading.svg')";
     window.electronAPI.startAnnouncer();
+    playBtnClick();
 });
 window.electronAPI.announcerStarted(() =>{
     console.log('Announcer started');
@@ -127,6 +133,29 @@ window.electronAPI.audioPlay(params =>{
 window.electronAPI.setSliderValue((val) => {
     slider.value = val;
 });
+
+function playBtnHover(){
+    sfxAudio.src = "../data/button_click_1.mp3";
+    sfxAudio.volume = 0.3;
+
+    sfxAudio.currentTime = 0;
+    sfxAudio.play();
+    // Add the ended listener only once for this play call (prevents accumulating listeners)
+    sfxAudio.addEventListener('ended', () => {
+        window.electronAPI.audioEnded();
+    }, { once: true });
+};
+function playBtnClick(){
+    sfxAudio.src = "../data/button_click_2.mp3";
+    sfxAudio.volume = 0.3;
+
+    sfxAudio.currentTime = 0;
+    sfxAudio.play();
+    // Add the ended listener only once for this play call (prevents accumulating listeners)
+    sfxAudio.addEventListener('ended', () => {
+        window.electronAPI.audioEnded();
+    }, { once: true });
+};
 
 slider.addEventListener('change', (event) => {
     let percent = event.target.value;

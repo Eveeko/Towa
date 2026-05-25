@@ -339,3 +339,22 @@ body {
   transform: translateX(0);
   transition: transform 3s ease;
 }
+
+/* Scrollbar styles for WebKit browsers (Chrome, Edge, Safari) */
+.consoleh1::-webkit-scrollbar {
+  width: 10px;
+}
+
+.consoleh1::-webkit-scrollbar-track {
+  background: rgba(104, 60, 91, 0.6); /* Matches main window */
+  border-radius: 5px;
+}
+
+.consoleh1::-webkit-scrollbar-thumb {
+  background-color: #ce8ac6; /* Highlight color */
+  border-radius: 5px;
+}
+
+.consoleh1::-webkit-scrollbar-thumb:hover {
+  background-color: #ce83c5; /* Slightly darker on hover */
+}
